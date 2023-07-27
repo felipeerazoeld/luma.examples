@@ -14,10 +14,14 @@ http://codentronix.com/2011/05/12/rotating-3d-cube-using-python-and-pygame/
 import sys
 import math
 from operator import itemgetter
-from demo_opts import get_device
+#from demo_opts import get_device
 from luma.core.render import canvas
 from luma.core.sprite_system import framerate_regulator
 
+from luma.core.interface.serial import i2c
+from luma.oled.device import ssd1309
+serial = i2c(port=4, address=0x3C)
+device = ssd1309(serial)
 
 def radians(degrees):
     return degrees * math.pi / 180
@@ -126,7 +130,7 @@ def main(num_iterations=sys.maxsize):
 
 if __name__ == "__main__":
     try:
-        device = get_device()
+        #device = get_device()
         main()
     except KeyboardInterrupt:
         pass
