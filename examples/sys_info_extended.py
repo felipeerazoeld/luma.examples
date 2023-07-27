@@ -16,7 +16,7 @@ Needs psutil (+ dependencies) installed::
 import time
 from pathlib import Path
 from datetime import datetime
-from demo_opts import get_device
+#from demo_opts import get_device
 from luma.core.render import canvas
 from PIL import ImageFont
 import psutil
@@ -24,9 +24,15 @@ import subprocess as sp
 import socket
 from collections import OrderedDict
 
+from luma.core.interface.serial import i2c
+from luma.oled.device import ssd1309
+serial = i2c(port=4, address=0x3C)
+device = ssd1309(serial)
 
 def get_temp():
-    temp = float(sp.getoutput("vcgencmd measure_temp").split("=")[1].split("'")[0])
+    #temp = float(sp.getoutput("vcgencmd measure_temp").split("=")[1].split("'")[0])
+    cmd_tmp="cat /sys/class/thermal/thermal_zone0/temp"
+    temp=float(int(sp.getoutput(cmd_tmp))/1000)
     return temp
 
 
@@ -64,7 +70,7 @@ def get_ipv4_address(interface_name=None):
     else:
         if_stats = psutil.net_if_stats()
         # remove loopback
-        if_stats_filtered = {key: if_stats[key] for key, stat in if_stats.items() if "loopback" not in stat.flags}
+        if_stats_filtered = {key: if_stats[key] for key, stat in if_stats.items() }
         # sort interfaces by
         # 1. Up/Down
         # 2. Duplex mode (full: 2, half: 1, unknown: 0)
@@ -156,7 +162,7 @@ toggle_interval_seconds = 4
 network_interface_name = None
 
 
-device = get_device()
+#device = get_device()
 font_default = ImageFont.truetype(str(Path(__file__).resolve().parent.joinpath("fonts", "DejaVuSansMono.ttf")), font_size)
 font_full = ImageFont.truetype(str(Path(__file__).resolve().parent.joinpath("fonts", "DejaVuSansMono.ttf")), font_size_full)
 
